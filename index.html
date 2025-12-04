@@ -10,7 +10,9 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <span class="logo" aria-hidden="true"></span>
+        <div class="logo" aria-hidden="true">
+          <span class="logo-text">CCL</span>
+        </div>
         <div>
           <h1>AccessMed Connect</h1>
           <p class="tag">Employee Telemedicine & Medical Records Portal</p>
@@ -23,237 +25,247 @@
 
       <nav id="mainNav" class="main-nav" aria-label="Main navigation">
         <ul>
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#dashboard">Dashboard</a></li>
-          <li><a href="#catbot">CatBot</a></li>
-          <li><a href="#emergency">Emergency</a></li>
-          <li><a href="#portal">Employee Portal</a></li>
-          <li><a href="#contact">Support</a></li>
+          <li><a href="#" data-target="home" class="active">Home</a></li>
+          <li><a href="#" data-target="chatbot">ChatBot</a></li>
+          <li><a href="#" data-target="emergencyPage">Emergency</a></li>
+          <li><a href="#" data-target="portalPage">Profile</a></li>
+          <li><a href="#" data-target="supportPage">Support</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- HERO -->
-    <section id="hero" class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h2>Smart access to doctors, medicines & medical history</h2>
-          <p>
-            AccessMed Connect helps employees and their families check medicine and doctor availability,
-            book appointments, store medical records, and get quick triage through CatBot.
-          </p>
-          <div class="hero-cta">
-            <a class="btn primary" href="#portal">Open Employee Portal</a>
-            <button class="btn ghost" id="openCatbotFromHero">Ask CatBot</button>
+    <!-- HOME PAGE -->
+    <section id="home" class="page page-active">
+      <!-- HERO -->
+      <section id="hero" class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <h2>Smart access to doctors, medicines & medical history</h2>
+            <p>
+              AccessMed Connect helps employees and their families check medicine and doctor availability,
+              book appointments, store medical records, and get quick triage through CatBot.
+            </p>
+            <div class="hero-cta">
+              <button class="btn primary" id="openPortalFromHero">Open Employee Portal</button>
+              <button class="btn ghost" id="openCatbotFromHero">Ask CatBot</button>
+            </div>
+
+            <div class="hero-tags">
+              <span class="pill">Medicine Availability</span>
+              <span class="pill">Doctor On-Duty</span>
+              <span class="pill">Emergency Desk</span>
+              <span class="pill">Report Scanner</span>
+            </div>
           </div>
 
-          <div class="hero-tags">
-            <span class="pill">Medicine Availability</span>
-            <span class="pill">Doctor On-Duty</span>
-            <span class="pill">Emergency Desk</span>
-            <span class="pill">Report Scanner</span>
+          <div class="hero-card">
+            <h3>Today at a glance</h3>
+            <ul class="quick-stats" id="quickStats">
+              <li><strong>On-duty doctors:</strong> <span id="statDoctors">–</span></li>
+              <li><strong>Medicines low on stock:</strong> <span id="statLowStock">–</span></li>
+              <li><strong>Upcoming appointments:</strong> <span id="statAppointments">–</span></li>
+            </ul>
+            <p class="muted small">Live view is powered by your backend API.</p>
           </div>
         </div>
+      </section>
 
-        <div class="hero-card">
-          <h3>Today at a glance</h3>
-          <ul class="quick-stats" id="quickStats">
-            <li><strong>On-duty doctors:</strong> <span id="statDoctors">–</span></li>
-            <li><strong>Medicines low on stock:</strong> <span id="statLowStock">–</span></li>
-            <li><strong>Upcoming appointments:</strong> <span id="statAppointments">–</span></li>
-          </ul>
-          <a class="small-link" href="#dashboard">View live dashboard ↓</a>
-        </div>
-      </div>
-    </section>
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="section container">
+        <h2 class="section-title">Live Dashboard</h2>
+        <div class="dashboard-grid">
+          <!-- Medicine Availability -->
+          <article class="card">
+            <h3>Medicine Availability</h3>
+            <p class="muted">Search stock across company pharmacies.</p>
+            <div class="form-row inline">
+              <input id="medicineQuery" type="text" placeholder="e.g., Paracetamol 500mg" />
+              <button id="checkMedicineBtn" class="btn primary small">Check</button>
+            </div>
+            <ul class="results-list" id="medicineResults"></ul>
+          </article>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="section container">
-      <h2 class="section-title">Live Dashboard</h2>
-      <div class="dashboard-grid">
-        <!-- Medicine Availability -->
-        <article class="card">
-          <h3>Medicine Availability</h3>
-          <p class="muted">Search stock across company pharmacies.</p>
-          <div class="form-row inline">
-            <input id="medicineQuery" type="text" placeholder="e.g., Paracetamol 500mg" />
-            <button id="checkMedicineBtn" class="btn primary small">Check</button>
-          </div>
-          <ul class="results-list" id="medicineResults"></ul>
-        </article>
-
-        <!-- Doctor Availability -->
-        <article class="card">
-          <h3>Doctor Availability</h3>
-          <p class="muted">Check who is available in the next 3 days.</p>
-          <div class="form-row">
-            <label for="specialitySelect">Speciality</label>
-            <select id="specialitySelect">
-              <option value="">Any</option>
-              <option value="General Physician">General Physician</option>
-              <option value="Cardiologist">Cardiologist</option>
-              <option value="Dermatologist">Dermatologist</option>
-              <option value="Pediatrician">Pediatrician</option>
-            </select>
-          </div>
-          <button id="checkDoctorsBtn" class="btn primary small">Check Availability</button>
-          <ul class="results-list" id="doctorResults"></ul>
-        </article>
-
-        <!-- History & Reports -->
-        <article class="card">
-          <h3>Medical History & Reports</h3>
-          <p class="muted">
-            Once logged in, you’ll see the last visits and reports for you and your family.
-          </p>
-          <ul class="history-preview" id="historyPreview">
-            <li class="muted">Login to load your report history.</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- CATBOT -->
-    <section id="catbot" class="section alt-bg">
-      <div class="container two-col">
-        <div>
-          <h2 class="section-title">CatBot — Symptom & Routing Assistant</h2>
-          <p>
-            Describe your symptoms (or use voice) and CatBot will suggest the right doctor domain,
-            urgency level, and whether you should book an appointment or contact emergency.
-          </p>
-          <ul class="benefits-list">
-            <li>Speech recognition for quick input</li>
-            <li>Maps symptoms to specialities</li>
-            <li>Checks doctor availability (next 3 days)</li>
-            <li>Can start appointment booking flow</li>
-          </ul>
-        </div>
-
-        <div class="card catbot-card">
-          <label for="catbotInput" class="catbot-label">Tell CatBot your symptoms</label>
-          <textarea id="catbotInput" rows="4" placeholder="e.g., Fever, cough, chest pain for 2 days"></textarea>
-
-          <div class="catbot-actions">
-            <button class="btn primary" id="catbotTextBtn">Analyze</button>
-            <button class="btn ghost" id="catbotVoiceBtn">🎤 Speak</button>
-          </div>
-
-          <p class="muted small" id="catbotStatus"></p>
-
-          <div class="catbot-response" id="catbotResponse" hidden>
-            <p><strong>Priority:</strong> <span id="cbPriority"></span></p>
-            <p><strong>Suggested speciality:</strong> <span id="cbSpeciality"></span></p>
-            <p><strong>Next action:</strong> <span id="cbAction"></span></p>
-            <p class="muted" id="cbMessage"></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- EMERGENCY -->
-    <section id="emergency" class="section emergency-section">
-      <div class="container emergency-banner">
-        <div>
-          <h2 class="section-title">Emergency Desk</h2>
-          <p>If someone needs immediate help, use the emergency options below.</p>
-          <ul class="benefits-list">
-            <li>Call receptionist / emergency desk</li>
-            <li>Notify ambulance desk through backend</li>
-            <li>Emergency log for incident tracking</li>
-          </ul>
-        </div>
-        <div class="emergency-actions">
-          <a href="tel:+911234567890" class="btn primary large">Call Reception</a>
-          <a href="tel:108" class="btn ghost large">Call Ambulance (108)</a>
-          <button id="notifyEmergencyBtn" class="btn primary outline large">
-            Log Emergency to System
-          </button>
-          <p class="muted small" id="emergencyMsg"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- EMPLOYEE PORTAL -->
-    <section id="portal" class="section container">
-      <h2 class="section-title">Employee Portal</h2>
-      <div class="two-col portal-grid">
-        <!-- Login -->
-        <div class="card">
-          <h3>Log in</h3>
-          <form id="loginForm" class="contact-form slim" novalidate>
+          <!-- Doctor Availability -->
+          <article class="card">
+            <h3>Doctor Availability</h3>
+            <p class="muted">Check who is available in the next 3 days.</p>
             <div class="form-row">
-              <label for="loginEmail">Work Email</label>
-              <input id="loginEmail" name="email" type="email" required />
+              <label for="specialitySelect">Speciality</label>
+              <select id="specialitySelect">
+                <option value="">Any</option>
+                <option value="General Physician">General Physician</option>
+                <option value="Cardiologist">Cardiologist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+              </select>
             </div>
-            <div class="form-row">
-              <label for="loginPassword">Password</label>
-              <input id="loginPassword" name="password" type="password" required />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Sign in</button>
-            </div>
-            <p id="loginMsg" class="form-msg" aria-live="polite"></p>
-          </form>
-        </div>
+            <button id="checkDoctorsBtn" class="btn primary small">Check Availability</button>
+            <ul class="results-list" id="doctorResults"></ul>
+          </article>
 
-        <!-- Profile summary -->
-        <div class="card">
-          <h3>Profile & Family</h3>
-          <div id="profileSummary" class="profile-summary">
-            <p class="muted">Sign in to view your profile, dependents, and upcoming appointments.</p>
+          <!-- History & Reports preview -->
+          <article class="card">
+            <h3>Medical History & Reports</h3>
+            <p class="muted">
+              Once logged in, you’ll see the last visits and reports for you and your family.
+            </p>
+            <ul class="history-preview" id="historyPreview">
+              <li class="muted">Login to load your report history.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <!-- CHATBOT PAGE -->
+    <section id="chatbot" class="page">
+      <section class="section alt-bg">
+        <div class="container two-col">
+          <div>
+            <h2 class="section-title">CatBot — Symptom & Routing Assistant</h2>
+            <p>
+              Describe your symptoms (or use voice) and CatBot will suggest the right doctor domain,
+              urgency level, and whether you should book an appointment or contact emergency.
+            </p>
+            <ul class="benefits-list">
+              <li>Speech recognition for quick input</li>
+              <li>Maps symptoms to specialities</li>
+              <li>Checks doctor availability (next 3 days)</li>
+              <li>Can start appointment booking flow</li>
+            </ul>
           </div>
 
-          <div class="report-upload" id="reportUploadBlock" hidden>
-            <h4>Upload Medical Report</h4>
-            <p class="muted">Scan or upload lab reports for you or your family members.</p>
-            <form id="reportForm">
+          <div class="card catbot-card">
+            <label for="catbotInput" class="catbot-label">Tell CatBot your symptoms</label>
+            <textarea id="catbotInput" rows="4" placeholder="e.g., Fever, cough, chest pain for 2 days"></textarea>
+
+            <div class="catbot-actions">
+              <button class="btn primary" id="catbotTextBtn">Analyze</button>
+              <button class="btn ghost" id="catbotVoiceBtn">🎤 Speak</button>
+            </div>
+
+            <p class="muted small" id="catbotStatus"></p>
+
+            <div class="catbot-response" id="catbotResponse" hidden>
+              <p><strong>Priority:</strong> <span id="cbPriority"></span></p>
+              <p><strong>Suggested speciality:</strong> <span id="cbSpeciality"></span></p>
+              <p><strong>Next action:</strong> <span id="cbAction"></span></p>
+              <p class="muted" id="cbMessage"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- EMERGENCY PAGE -->
+    <section id="emergencyPage" class="page">
+      <section class="section emergency-section">
+        <div class="container emergency-banner">
+          <div>
+            <h2 class="section-title">Emergency Desk</h2>
+            <p>If someone needs immediate help, use the emergency options below.</p>
+            <ul class="benefits-list">
+              <li>Call receptionist / emergency desk</li>
+              <li>Notify ambulance desk through backend</li>
+              <li>Emergency log for incident tracking</li>
+            </ul>
+          </div>
+          <div class="emergency-actions">
+            <a href="tel:+911234567890" class="btn primary large">Call Reception</a>
+            <a href="tel:108" class="btn ghost large">Call Ambulance (108)</a>
+            <button id="notifyEmergencyBtn" class="btn primary outline large">
+              Log Emergency to System
+            </button>
+            <p class="muted small" id="emergencyMsg"></p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- PORTAL PAGE -->
+    <section id="portalPage" class="page">
+      <section class="section container">
+        <h2 class="section-title">Employee Portal</h2>
+        <div class="two-col portal-grid">
+          <!-- Login -->
+          <div class="card">
+            <h3>Log in</h3>
+            <form id="loginForm" class="contact-form slim" novalidate>
               <div class="form-row">
-                <label for="reportFile">Select file</label>
-                <input id="reportFile" name="file" type="file" accept=".pdf,image/*" required />
+                <label for="loginEmail">Work Email</label>
+                <input id="loginEmail" name="email" type="email" required />
               </div>
-              <button type="submit" class="btn ghost small">Upload</button>
-              <p id="reportMsg" class="form-msg"></p>
+              <div class="form-row">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" name="password" type="password" required />
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn primary">Sign in</button>
+              </div>
+              <p id="loginMsg" class="form-msg" aria-live="polite"></p>
             </form>
           </div>
+
+          <!-- Profile summary -->
+          <div class="card">
+            <h3>Profile & Family</h3>
+            <div id="profileSummary" class="profile-summary">
+              <p class="muted">Sign in to view your profile, dependents, and upcoming appointments.</p>
+            </div>
+
+            <div class="report-upload" id="reportUploadBlock" hidden>
+              <h4>Upload Medical Report</h4>
+              <p class="muted">Scan or upload lab reports for you or your family members.</p>
+              <form id="reportForm">
+                <div class="form-row">
+                  <label for="reportFile">Select file</label>
+                  <input id="reportFile" name="file" type="file" accept=".pdf,image/*" required />
+                </div>
+                <button type="submit" class="btn ghost small">Upload</button>
+                <p id="reportMsg" class="form-msg"></p>
+              </form>
+            </div>
+          </div>
         </div>
+      </section>
+    </section>
+
+    <!-- SUPPORT PAGE -->
+   <section id="supportPage" class="page">
+  <section class="section container">
+    <form id="contactForm" class="contact-form slim" novalidate>
+      <h2 class="section-title support-heading">Support / IT Helpdesk</h2>
+
+      <div class="form-row">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required />
       </div>
-    </section>
 
-    <!-- SUPPORT / CONTACT -->
-    <section id="contact" class="section alt-bg container">
-      <h2 class="section-title">Support / IT Helpdesk</h2>
-      <form id="contactForm" class="contact-form" novalidate>
-        <div class="form-row">
-          <label for="name">Name</label>
-          <input id="name" name="name" type="text" required />
-        </div>
+      <div class="form-row">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+      </div>
 
-        <div class="form-row">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" required />
-        </div>
+      <div class="form-row">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="4" required></textarea>
+      </div>
 
-        <div class="form-row">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" required></textarea>
-        </div>
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Send message</button>
+        <button type="button" class="btn ghost" id="resetBtn">Reset</button>
+      </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn primary">Send message</button>
-          <button type="button" class="btn ghost" id="resetBtn">Reset</button>
-        </div>
+      <p id="formMsg" class="form-msg" aria-live="polite"></p>
+    </form>
+  </section>
+</section>
 
-        <p id="formMsg" class="form-msg" aria-live="polite"></p>
-      </form>
-    </section>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>AccessMed Connect — Internal Healthcare & Telemedicine Tool.</p>
-        <p class="muted">Prototype UI for your project submission.</p>
       </div>
     </footer>
   </main>

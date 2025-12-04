@@ -1,9 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const API_BASE = '/api'; // adjust if your backend is on another path/origin
+  const API_BASE = '/api'; // adjust if backend is on another origin
 
-  // ---------- NAV ----------
+  // ---------- NAV + PAGE SWITCHING ----------
   const navToggle = document.getElementById('navToggle');
   const mainNav = document.getElementById('mainNav');
+  const pageSections = document.querySelectorAll('.page');
+  const navLinks = document.querySelectorAll('.main-nav a[data-target]');
+
+  function openPage(pageId) {
+    pageSections.forEach(sec => {
+      sec.classList.toggle('page-active', sec.id === pageId);
+    });
+
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.target === pageId);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // close mobile nav
+    mainNav.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
 
   navToggle.addEventListener('click', () => {
     const expanded = navToggle.getAttribute('aria-expanded') === 'true';
@@ -11,12 +29,30 @@ document.addEventListener('DOMContentLoaded', () => {
     mainNav.classList.toggle('open');
   });
 
-  // ---------- HERO CATBOT SHORTCUT ----------
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.dataset.target;
+      openPage(target);
+    });
+  });
+
+  // ---------- HERO BUTTON SHORTCUTS ----------
   const openCatbotFromHero = document.getElementById('openCatbotFromHero');
+  const openPortalFromHero = document.getElementById('openPortalFromHero');
+
   if (openCatbotFromHero) {
     openCatbotFromHero.addEventListener('click', () => {
-      document.getElementById('catbot').scrollIntoView({ behavior: 'smooth' });
-      document.getElementById('catbotInput').focus();
+      openPage('chatbot');
+      const input = document.getElementById('catbotInput');
+      if (input) input.focus();
+    });
+  }
+  if (openPortalFromHero) {
+    openPortalFromHero.addEventListener('click', () => {
+      openPage('portalPage');
+      const email = document.getElementById('loginEmail');
+      if (email) email.focus();
     });
   }
 
@@ -27,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadQuickStats() {
     try {
-      // You can replace this with real endpoints later, like:
+      // Replace with real endpoint later
       // const res = await fetch(`${API_BASE}/stats/overview`);
       // const data = await res.json();
       const data = {
@@ -70,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         medicineResults.appendChild(li);
       });
     } catch (err) {
-      // demo fallback
       medicineResults.innerHTML = `
         <li>Paracetamol 500mg — Stock: 125 (Pharmacy A)</li>
         <li>Ibuprofen 200mg — Stock: 60 (Pharmacy B)</li>
@@ -152,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       catbotStatus.textContent = '';
       catbotResponse.hidden = false;
     } catch (err) {
-      // demo logic fallback similar to backend
+      // demo fallback
       const lower = text.toLowerCase();
       let priority = 'normal';
       let speciality = 'General Physician';
@@ -225,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   notifyEmergencyBtn.addEventListener('click', async () => {
     emergencyMsg.textContent = 'Notifying emergency desk...';
+    emergencyMsg.style.color = '#fee2e2';
     try {
       const res = await fetch(`${API_BASE}/emergency`, {
         method: 'POST',
@@ -233,10 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (!res.ok) throw new Error('Request failed');
       emergencyMsg.textContent = 'Emergency has been logged and forwarded to the desk.';
-      emergencyMsg.style.color = '#bbf7d0';
     } catch (err) {
       emergencyMsg.textContent = 'Demo: emergency would be logged here. Connect backend to enable.';
-      emergencyMsg.style.color = '#fde68a';
     }
   });
 
@@ -255,11 +289,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!email || !password) {
       loginMsg.textContent = 'Please enter both email and password.';
-      loginMsg.style.color = '#b91c1c';
+      loginMsg.style.color = '#fca5a5';
       return;
     }
 
     loginMsg.textContent = 'Signing in...';
+    loginMsg.style.color = '#9ca3af';
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
@@ -270,24 +305,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       authToken = data.token;
       loginMsg.textContent = `Welcome, ${data.name}.`;
-      loginMsg.style.color = '#064e3b';
+      loginMsg.style.color = '#bbf7d0';
 
-      // Load profile summary (for now demo data)
       profileSummary.innerHTML = `
         <p><strong>Name:</strong> ${data.name}</p>
         <p><strong>Role:</strong> Employee</p>
         <p><strong>Dependents:</strong> Spouse, 1 Child</p>
         <p><strong>Next appointment:</strong> Dr. Sharma — Tomorrow 10:30 AM</p>
       `;
-      historyPreview.innerHTML = `
-        <li>Jan 2025 — Annual health check-up</li>
-        <li>Mar 2025 — Follow-up for blood tests</li>
-        <li class="muted">More details available in full history view.</li>
-      `;
+      if (historyPreview) {
+        historyPreview.innerHTML = `
+          <li>Jan 2025 — Annual health check-up</li>
+          <li>Mar 2025 — Follow-up for blood tests</li>
+          <li class="muted">More details available in full history view.</li>
+        `;
+      }
       reportUploadBlock.hidden = false;
     } catch (err) {
       loginMsg.textContent = 'Login failed. Use valid credentials or connect backend.';
-      loginMsg.style.color = '#b91c1c';
+      loginMsg.style.color = '#fca5a5';
       authToken = null;
       profileSummary.innerHTML = '<p class="muted">Sign in to view your profile and family details.</p>';
       reportUploadBlock.hidden = true;
@@ -304,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (!reportFile.files.length) {
         reportMsg.textContent = 'Please select a file first.';
-        reportMsg.style.color = '#b91c1c';
+        reportMsg.style.color = '#fca5a5';
         return;
       }
       const file = reportFile.files[0];
@@ -312,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('file', file);
 
       reportMsg.textContent = 'Uploading report...';
+      reportMsg.style.color = '#9ca3af';
 
       try {
         const res = await fetch(`${API_BASE}/reports/upload`, {
@@ -321,46 +358,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.ok) throw new Error('Upload failed');
         const data = await res.json();
         reportMsg.textContent = `Uploaded: ${data.filename || file.name}`;
-        reportMsg.style.color = '#064e3b';
+        reportMsg.style.color = '#bbf7d0';
       } catch (err) {
         reportMsg.textContent = 'Demo: report would be uploaded. Connect backend to enable.';
-        reportMsg.style.color = '#b45309';
+        reportMsg.style.color = '#fde68a';
       }
     });
   }
 
-  // ---------- SUPPORT / CONTACT FORM (same as before) ----------
-  const form = document.getElementById('contactForm');
+  // ---------- SUPPORT / CONTACT FORM ----------
+  const contactForm = document.getElementById('contactForm');
   const formMsg = document.getElementById('formMsg');
-  form.addEventListener('submit', (e) => {
+  const resetBtn = document.getElementById('resetBtn');
+
+  contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
+    const name = contactForm.name.value.trim();
+    const email = contactForm.email.value.trim();
+    const message = contactForm.message.value.trim();
 
     if (!name || !email || !message) {
       formMsg.textContent = 'Please complete all fields.';
-      formMsg.style.color = '#b91c1c';
+      formMsg.style.color = '#fca5a5';
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       formMsg.textContent = 'Please provide a valid email address.';
-      formMsg.style.color = '#b91c1c';
+      formMsg.style.color = '#fca5a5';
       return;
     }
 
     formMsg.textContent = 'Thanks — your message has been recorded (demo).';
-    formMsg.style.color = '#064e3b';
+    formMsg.style.color = '#bbf7d0';
 
     setTimeout(() => {
-      form.reset();
+      contactForm.reset();
     }, 700);
   });
 
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    form.reset();
+  resetBtn.addEventListener('click', () => {
+    contactForm.reset();
     formMsg.textContent = '';
   });
 });
